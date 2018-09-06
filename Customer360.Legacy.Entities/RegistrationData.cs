@@ -5,11 +5,18 @@ namespace Customer360.Legacy.Entities
 {
     public class RegistrationData
     {
+        public RegistrationData()
+        {
+            Addresses = new List<Address>();
+            Phones = new List<Phone>();
+            Emails = new List<Email>();
+        }
+
         public long CustomerDocument { get; set; }
         public DateTime BornDate { get; set; }
-        public IEnumerable<Address> Addresses { get; set; }
-        public IEnumerable<Phone> Phones { get; set; }
-        public IEnumerable<Email> Emails { get; set; }
+        public List<Address> Addresses { get; set; }
+        public List<Phone> Phones { get; set; }
+        public List<Email> Emails { get; set; }
     }
 
     public class Email
@@ -25,6 +32,7 @@ namespace Customer360.Legacy.Entities
 
     public class Address
     {
+        public long Id { get; set; }
         public string StreetAddress { get; set; }
         public string Number { get; set; }
         public string AddressComplement { get; set; }

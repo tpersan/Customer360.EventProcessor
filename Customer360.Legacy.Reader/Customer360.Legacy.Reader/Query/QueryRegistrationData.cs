@@ -17,8 +17,8 @@ namespace Customer360.Legacy.Reader.Query
 
                     FROM Cliente c
                         INNER JOIN pessoa p ON c.PESSOAID = p.PESSOAID
-                    LEFT JOIN PessoaFisica pf ON pf.PessoaId = p.PessoaId
-                    LEFT JOIN PessoaJuridica pj ON pj.PessoaId = p.PessoaId
+                        LEFT JOIN PessoaFisica pf ON pf.PessoaId = p.PessoaId
+                        LEFT JOIN PessoaJuridica pj ON pj.PessoaId = p.PessoaId
                     WHERE ISNULL(pj.Cnpj, pf.Cpf) = @customerDocument";
 
 
@@ -29,11 +29,27 @@ namespace Customer360.Legacy.Reader.Query
 
         public async Task<RegistrationData> ExecuteAsync(IQueryExecutor query)
         {
-            return (await query.QuerySingleAsync<RegistrationData>(s =>
-            {
-                s.WithCommandText(_sqlInstruction)
-                 .WithParameters(_customerDocument);
-            }));
+            RegistrationData registrationData = null;
+
+            var result = await query.QueryAsync<RegistrationData, Address, RegistrationData>(
+                (registration, address) =>
+                {
+                    if (registrationData == null)
+                        registrationData = registration;
+
+                    registrationData.Addresses.Add(address);
+
+                    return registrationData;
+                },
+                s =>
+                {
+                    s.WithCommandText(_sqlInstruction)
+                        .WithParameters(_customerDocument);
+                },
+                nameof(Address.Id));
+
+            return registrationData;
+
         }
     }
 }
