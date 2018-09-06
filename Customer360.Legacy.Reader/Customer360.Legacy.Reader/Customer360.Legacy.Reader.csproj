@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Api.Infraestrutura.Core.Dapper" Version="1.0.0.46796" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Customer360.Legacy.Entities\Customer360.Legacy.Entities.csproj" />
   </ItemGroup>
 

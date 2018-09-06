@@ -4,6 +4,6 @@ namespace Customer360.Legacy.Entities.Repository
 {
     public interface IRegistrationDataRepository
     {
-        Task<RegistrationData> GetBy(long customerDocument);
+        Task<RegistrationData> GetByAsync(long customerDocument);
     }
 }
