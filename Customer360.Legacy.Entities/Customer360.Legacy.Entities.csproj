@@ -4,8 +4,4 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Customer360.Legacy.Entities\Customer360.Legacy.Entities.csproj" />
-  </ItemGroup>
-
 </Project>

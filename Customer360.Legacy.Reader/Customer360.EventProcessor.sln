@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Customer360.Legacy.Reader.T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Customer360.Event.Processor.Test", "Customer360.Event.Processor.Test\Customer360.Event.Processor.Test.csproj", "{C4957690-1958-4960-A5EB-FF2A66542626}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Customer360.Legacy.Entities", "..\Customer360.Legacy.Entities\Customer360.Legacy.Entities.csproj", "{1B108361-1B87-4146-B2ED-79E86272D54B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{C4957690-1958-4960-A5EB-FF2A66542626}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4957690-1958-4960-A5EB-FF2A66542626}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4957690-1958-4960-A5EB-FF2A66542626}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B108361-1B87-4146-B2ED-79E86272D54B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B108361-1B87-4146-B2ED-79E86272D54B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B108361-1B87-4146-B2ED-79E86272D54B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B108361-1B87-4146-B2ED-79E86272D54B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
