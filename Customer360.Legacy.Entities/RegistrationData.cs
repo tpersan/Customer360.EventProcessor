@@ -12,8 +12,12 @@ namespace Customer360.Legacy.Entities
             Emails = new List<Email>();
         }
 
+        public string CustomerName { get; set; }
         public long CustomerDocument { get; set; }
         public DateTime BornDate { get; set; }
+        public string RegistrationId { get; set; }
+        public string ExternalId { get; set; }
+
         public List<Address> Addresses { get; set; }
         public List<Phone> Phones { get; set; }
         public List<Email> Emails { get; set; }
@@ -32,7 +36,7 @@ namespace Customer360.Legacy.Entities
 
     public class Address
     {
-        public long Id { get; set; }
+        public long AddressId { get; set; }
         public string StreetAddress { get; set; }
         public string Number { get; set; }
         public string AddressComplement { get; set; }

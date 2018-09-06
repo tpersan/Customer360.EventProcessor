@@ -8,17 +8,27 @@ namespace Customer360.Legacy.Reader.Query
     {
         private readonly long _customerDocument;
         private readonly string _sqlInstruction = @"
-                    SELECT
-                    p.NomePessoa customerName,
+                    SELECT 
+                        p.NomePessoa customerName,
                         ISNULL(pj.Cnpj, pf.Cpf) customerDocument,
                         ISNULL(pj.DATAABERTURA, pf.DATANASCIMENTO) bornDate,
-                        c.MatriculaId,
-                    P.PessoaId ExternalIdentifier
+                        c.MatriculaId registrationId,
+                        P.PessoaId ExternalId,
+            
+                        --Endereço do Cliente
+                        endereco.EnderecoId addressId,
+                        endereco.Logradouro streetAddress,
+                        endereco.Numero number,
+                        endereco.Complemento addressComplement,
+                        endereco.Cidade city,
+                        endereco.Uf State,
+                        endereco.Cep postalCode
 
                     FROM Cliente c
                         INNER JOIN pessoa p ON c.PESSOAID = p.PESSOAID
                         LEFT JOIN PessoaFisica pf ON pf.PessoaId = p.PessoaId
-                        LEFT JOIN PessoaJuridica pj ON pj.PessoaId = p.PessoaId
+                        LEFT JOIN PessoaJuridica pj ON pj.PessoaId = p.PessoaId  
+                        INNER JOIN Endereco endereco ON endereco.PessoaId = p.PessoaId  
                     WHERE ISNULL(pj.Cnpj, pf.Cpf) = @customerDocument";
 
 
@@ -31,7 +41,7 @@ namespace Customer360.Legacy.Reader.Query
         {
             RegistrationData registrationData = null;
 
-            var result = await query.QueryAsync<RegistrationData, Address, RegistrationData>(
+            await query.QueryAsync<RegistrationData, Address, RegistrationData>(
                 (registration, address) =>
                 {
                     if (registrationData == null)
@@ -46,7 +56,7 @@ namespace Customer360.Legacy.Reader.Query
                     s.WithCommandText(_sqlInstruction)
                         .WithParameters(_customerDocument);
                 },
-                nameof(Address.Id));
+                nameof(Address.AddressId));
 
             return registrationData;
 
