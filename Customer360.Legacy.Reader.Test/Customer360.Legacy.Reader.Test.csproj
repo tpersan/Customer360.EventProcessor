@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Api.Infraestrutura.Core" Version="1.0.0.46796" />
+    <PackageReference Include="Api.Infraestrutura.Core.Dapper" Version="1.0.0.46796" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
@@ -19,6 +20,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Customer360.Legacy.Reader\Customer360.Legacy.Reader\Customer360.Legacy.Reader.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

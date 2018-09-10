@@ -17,6 +17,11 @@ namespace Customer360.Legacy.Reader.Test.Query
         private IConfiguration _configuration;
         public IConfiguration configuration => _configuration ?? (_configuration = IniciarConfiguration());
 
+        public IntegrationTestBase()
+        {
+            OneTimeSetUp();
+        }
+
         public void OneTimeSetUp()
         {
             ConfigurarServicos();
@@ -35,12 +40,12 @@ namespace Customer360.Legacy.Reader.Test.Query
         private void ConfigurarServicos()
         {
             var serviceCollection = new ServiceCollection();
-            serviceCollection.AddUnitOfWorkDapper(opt => opt.AddConnection<SqlConnection>(configuration.GetConnectionString("SQLServerConnection")));
 
-            //serviceCollection.AddTransient<ApiMappers>();
-            //serviceCollection.AddTransient<ResgateBusiness>();
+            var connectionString = configuration.GetConnectionString("SQLServerConnection");
+            serviceCollection.AddUnitOfWorkDapper(opt => opt.AddConnection<SqlConnection>(connectionString));
 
             services = serviceCollection.BuildServiceProvider();
+            Setup();
 
         }
 
@@ -52,8 +57,6 @@ namespace Customer360.Legacy.Reader.Test.Query
         public void Setup()
         {
             context = services.GetService<DapperContext>();
-            context.BeginTransaction();
-
             dataAccess = services.GetService<DataAccess>();
         }
 

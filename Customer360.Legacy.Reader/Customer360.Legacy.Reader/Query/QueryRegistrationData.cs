@@ -15,23 +15,24 @@ namespace Customer360.Legacy.Reader.Query
                         c.MatriculaId registrationId,
                         P.PessoaId ExternalId,
             
-                        --Endereço do Cliente
-                        endereco.EnderecoId addressId,
-                        endereco.Logradouro streetAddress,
-                        endereco.Numero number,
-                        endereco.Complemento addressComplement,
-                        endereco.Cidade city,
-                        endereco.Uf State,
-                        endereco.Cep postalCode
+                        endereco.EnderecoId addressId, endereco.Logradouro streetAddress,
+                        endereco.Numero homeNumber, endereco.Complemento addressComplement,
+                        endereco.Cidade city, endereco.Uf State, endereco.Cep postalCode,
+
+                        tel.telefoneId phoneId, tel.ddd, tel.NUMERO phoneNumber
 
                     FROM Cliente c
                         INNER JOIN pessoa p ON c.PESSOAID = p.PESSOAID
                         LEFT JOIN PessoaFisica pf ON pf.PessoaId = p.PessoaId
                         LEFT JOIN PessoaJuridica pj ON pj.PessoaId = p.PessoaId  
-                        INNER JOIN Endereco endereco ON endereco.PessoaId = p.PessoaId  
+                        INNER JOIN Endereco endereco ON endereco.PessoaId = p.PessoaId  and endereco.Ativo = 1
+                        INNER JOIN Telefone tel on tel.PESSOAID = p.PESSOAID and tel.Ativo = 1
+                   
                     WHERE ISNULL(pj.Cnpj, pf.Cpf) = @customerDocument";
 
 
+        //email.emailId, email.enderecoEmail emailAddress
+        //INNER JOIN Email email on email.PESSOAID = p.PESSOAID AND email.Ativo = 1
         public QueryRegistrationData(long customerDocument)
         {
             _customerDocument = customerDocument;
@@ -41,22 +42,24 @@ namespace Customer360.Legacy.Reader.Query
         {
             RegistrationData registrationData = null;
 
-            await query.QueryAsync<RegistrationData, Address, RegistrationData>(
-                (registration, address) =>
+            await query.QueryAsync<RegistrationData, Address, Phone, RegistrationData>(
+                (registration, address,  phone) =>
                 {
                     if (registrationData == null)
                         registrationData = registration;
 
-                    registrationData.Addresses.Add(address);
+                    registrationData.InsertAddress(address);
+                    registrationData.InsertPhone(phone);
+                    //registrationData.InsertEmail(email);
 
                     return registrationData;
                 },
                 s =>
                 {
                     s.WithCommandText(_sqlInstruction)
-                        .WithParameters(_customerDocument);
+                        .WithParameters(new { customerDocument = _customerDocument });
                 },
-                nameof(Address.AddressId));
+                "AddressId, PhoneId");
 
             return registrationData;
 
