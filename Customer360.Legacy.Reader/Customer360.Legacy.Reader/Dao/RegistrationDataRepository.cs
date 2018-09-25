@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Api.Infraestrutura.Core.Dapper;
-using Customer360.Legacy.Entities;
-using Customer360.Legacy.Entities.Repository;
+using Customer360.Legacy.Reader.Contract;
 using Customer360.Legacy.Reader.Query;
+using Customer360.Legacy.Reader.Repository;
 
 namespace Customer360.Legacy.Reader.Dao
 {

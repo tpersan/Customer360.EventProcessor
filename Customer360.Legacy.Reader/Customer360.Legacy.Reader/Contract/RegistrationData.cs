@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Customer360.Legacy.Entities
+namespace Customer360.Legacy.Reader.Contract
 {
     public class RegistrationData
     {

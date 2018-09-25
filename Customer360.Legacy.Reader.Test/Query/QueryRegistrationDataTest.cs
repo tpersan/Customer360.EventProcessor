@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Customer360.Legacy.Reader.Query;
-using Customer360.Legacy.Reader.Test.Query;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace Customer360.Legacy.Reader.Test.Query
@@ -28,6 +26,12 @@ namespace Customer360.Legacy.Reader.Test.Query
             Assert.True(resultado.Addresses.Any());
             Assert.Contains(resultado.Addresses, a => a.StreetAddress.ToLowerInvariant().Contains("pires"));
 
+            Assert.True(resultado.Phones.Any());
+            Assert.Contains(resultado.Phones, a => a.PhoneNumber.Equals(991373013));
+
+            var dadosCadastrais = JsonConvert.SerializeObject(resultado);
+
+            Assert.True(!string.IsNullOrEmpty(dadosCadastrais));
         }
     }
 }

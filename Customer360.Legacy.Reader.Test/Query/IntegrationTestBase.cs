@@ -41,7 +41,7 @@ namespace Customer360.Legacy.Reader.Test.Query
         {
             var serviceCollection = new ServiceCollection();
 
-            var connectionString = configuration.GetConnectionString("SQLServerConnection");
+            var connectionString = configuration.GetConnectionString("mongeral.legacy.sqlserverconnection");
             serviceCollection.AddUnitOfWorkDapper(opt => opt.AddConnection<SqlConnection>(connectionString));
 
             services = serviceCollection.BuildServiceProvider();

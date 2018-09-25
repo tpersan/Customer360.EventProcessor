@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Api.Infraestrutura.Core.Dapper;
-using Customer360.Legacy.Entities;
+using Customer360.Legacy.Reader.Contract;
 
 namespace Customer360.Legacy.Reader.Query
 {
@@ -9,17 +9,19 @@ namespace Customer360.Legacy.Reader.Query
         private readonly long _customerDocument;
         private readonly string _sqlInstruction = @"
                     SELECT 
-                        p.NomePessoa customerName,
-                        ISNULL(pj.Cnpj, pf.Cpf) customerDocument,
-                        ISNULL(pj.DATAABERTURA, pf.DATANASCIMENTO) bornDate,
-                        c.MatriculaId registrationId,
-                        P.PessoaId ExternalId,
+                        p.NomePessoa customerName
+                        , ISNULL(pj.Cnpj, pf.Cpf) customerDocument
+                        , ISNULL(pj.DATAABERTURA, pf.DATANASCIMENTO) bornDate
+                        , c.MatriculaId registrationId
+                        , P.PessoaId ExternalId
             
-                        endereco.EnderecoId addressId, endereco.Logradouro streetAddress,
-                        endereco.Numero homeNumber, endereco.Complemento addressComplement,
-                        endereco.Cidade city, endereco.Uf State, endereco.Cep postalCode,
+                        , endereco.EnderecoId addressId, endereco.Logradouro streetAddress
+                        , endereco.Numero homeNumber, endereco.Complemento addressComplement
+                        , endereco.Cidade city, endereco.Uf State, endereco.Cep postalCode
 
-                        tel.telefoneId phoneId, tel.ddd, tel.NUMERO phoneNumber
+                        , tel.telefoneId phoneId, tel.ddd, tel.NUMERO phoneNumber
+
+                        , email.emailId emailId, email.enderecoEmail remoteAddress, email.TIPOEMAILID EmailType
 
                     FROM Cliente c
                         INNER JOIN pessoa p ON c.PESSOAID = p.PESSOAID
@@ -27,12 +29,11 @@ namespace Customer360.Legacy.Reader.Query
                         LEFT JOIN PessoaJuridica pj ON pj.PessoaId = p.PessoaId  
                         INNER JOIN Endereco endereco ON endereco.PessoaId = p.PessoaId  and endereco.Ativo = 1
                         INNER JOIN Telefone tel on tel.PESSOAID = p.PESSOAID and tel.Ativo = 1
-                   
+                        INNER JOIN Email email on email.PESSOAID = p.PESSOAID AND email.Ativo = 1                   
                     WHERE ISNULL(pj.Cnpj, pf.Cpf) = @customerDocument";
 
 
-        //email.emailId, email.enderecoEmail emailAddress
-        //INNER JOIN Email email on email.PESSOAID = p.PESSOAID AND email.Ativo = 1
+        //
         public QueryRegistrationData(long customerDocument)
         {
             _customerDocument = customerDocument;
@@ -42,24 +43,38 @@ namespace Customer360.Legacy.Reader.Query
         {
             RegistrationData registrationData = null;
 
-            await query.QueryAsync<RegistrationData, Address, Phone, RegistrationData>(
-                (registration, address,  phone) =>
-                {
-                    if (registrationData == null)
-                        registrationData = registration;
+           await query.QueryAsync<RegistrationData>(
+               new[]
+               {
+                   typeof(RegistrationData),
+                   typeof(Address),
+                   typeof(Phone),
+                   typeof(Email)
+               },
+               objects =>
+               {
+                   var registration = objects[0] as RegistrationData;
+                   var address = objects[1] as Address;
+                   var phone = objects[2] as Phone;
+                   var email = objects[3] as Email;
 
-                    registrationData.InsertAddress(address);
-                    registrationData.InsertPhone(phone);
-                    //registrationData.InsertEmail(email);
+                   if (registrationData == null)
+                       registrationData = registration;
 
-                    return registrationData;
-                },
-                s =>
-                {
-                    s.WithCommandText(_sqlInstruction)
-                        .WithParameters(new { customerDocument = _customerDocument });
-                },
-                "AddressId, PhoneId");
+                   registrationData.InsertAddress(address);
+                   registrationData.InsertPhone(phone);
+                   registrationData.InsertEmail(email);
+
+                   return registrationData;
+
+               },
+               s =>
+               {
+                   s.WithCommandText(_sqlInstruction)
+                       .WithParameters(new { customerDocument = _customerDocument });
+               },
+               splitOn: "AddressId, PhoneId, EmailId");
+
 
             return registrationData;
 
